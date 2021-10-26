@@ -16,6 +16,7 @@ use Trive\Fiskal\Api\Data\InvoiceInterfaceFactory;
 use Trive\Fiskal\Api\InvoiceRepositoryInterface;
 use Magento\Sales\Api\Data\InvoiceInterface;
 use Magento\Sales\Api\Data\CreditmemoInterface;
+use Magento\Framework\Stdlib\DateTime\DateTime;
 
 class FiskalInvoiceService
 {
@@ -28,21 +29,27 @@ class FiskalInvoiceService
     /** @var InvoiceRepositoryInterface */
     protected $invoiceRepository;
 
+    /** @var DateTime */
+    protected $dateTime;
+
     /**
      * FiskalInvoiceService constructor.
      *
      * @param Config                     $config
      * @param InvoiceInterfaceFactory    $invoiceDataFactory
      * @param InvoiceRepositoryInterface $invoiceRepository
+     * @param DateTime                   $dateTime
      */
     public function __construct(
         Config $config,
         InvoiceInterfaceFactory $invoiceDataFactory,
-        InvoiceRepositoryInterface $invoiceRepository
+        InvoiceRepositoryInterface $invoiceRepository,
+        DateTime $dateTime
     ) {
         $this->config = $config;
         $this->invoiceDataFactory = $invoiceDataFactory;
         $this->invoiceRepository = $invoiceRepository;
+        $this->dateTime = $dateTime;
     }
 
     /**
@@ -52,8 +59,10 @@ class FiskalInvoiceService
      */
     public function createFiskalInvoiceFromInvoice($invoice)
     {
+        /** @var \Trive\Fiskal\Model\Invoice $fiskalInvoice */
         $fiskalInvoice = $this->invoiceDataFactory->create();
         $fiskalInvoice->setStoreId($invoice->getStoreId())
+                      ->setCreatedAt($this->dateTime->gmtDate())
                       ->setLocationCode($this->config->getLocationCode())
                       ->setPaymentDeviceCode($this->config->getPaymentDeviceCode())
                       ->setEntityType(FiskalInvoiceInterface::ENTITY_TYPE_INVOICE)

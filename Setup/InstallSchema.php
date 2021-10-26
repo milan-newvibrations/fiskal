@@ -138,7 +138,7 @@ class InstallSchema implements InstallSchemaInterface
             'Entity ID'
         )->addColumn(
             'created_at',
-            \Magento\Framework\DB\Ddl\Table::TYPE_TIMESTAMP,
+            \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME,
             null,
             ['nullable' => false],
             'Created At'
@@ -156,7 +156,7 @@ class InstallSchema implements InstallSchemaInterface
             'ZKI'
         )->addColumn(
             'synced_at',
-            \Magento\Framework\DB\Ddl\Table::TYPE_TIMESTAMP,
+            \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME,
             null,
             [],
             'Synced At'

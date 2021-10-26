@@ -114,7 +114,7 @@ class EmailInvoiceSetTemplateVarsBefore implements ObserverInterface
         $fiskalInvoice = $this->getFiskalInvoice($identifier);
 
         $data = [];
-        if (!$fiskalInvoice[InvoiceInterface::ID] || !$fiskalInvoice[InvoiceInterface::SYNCED_AT]) {
+        if (!isset($fiskalInvoice[InvoiceInterface::ID]) || !isset($fiskalInvoice[InvoiceInterface::SYNCED_AT])) {
             return $data;
         }
         $data = [
