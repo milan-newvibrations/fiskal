@@ -105,7 +105,7 @@ class AbstractTemplate
                 $text = $subject->getTemplateText();
                 $text .= '<table style="text-align: center;" width="100%" align="center"><tbody>';
                 $text .= '<tr><td>{{trans "Broj računa: %fiskal_invoice_number" fiskal_invoice_number=$'.$type.'.fiskal_invoice_number}}</td></tr>';
-                $text .= '<tr><td>{{trans "Vrijeme izdavanja računa: %fiskal_synced_at" fiskal_synced_at=$'.$type.'.fiskal_synced_at}}</td></tr>';
+                $text .= '<tr><td>{{trans "Vrijeme izdavanja računa: %fiskal_date_time" fiskal_date_time=$'.$type.'.fiskal_date_time}}</td></tr>';
                 $text .= '<tr><td>{{trans "JIR: %fiskal_jir" fiskal_jir=$'.$type.'.fiskal_jir}}</td></tr>';
                 $text .= '<tr><td>{{trans "Zaštitni kod: %fiskal_zki" fiskal_zki=$'.$type.'.fiskal_zki}}</td></tr>';
                 $text .= '</tbody></table>';
