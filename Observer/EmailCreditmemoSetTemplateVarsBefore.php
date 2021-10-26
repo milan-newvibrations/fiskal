@@ -119,7 +119,7 @@ class EmailCreditmemoSetTemplateVarsBefore implements ObserverInterface
         }
         $data = [
             'fiskal_'.InvoiceInterface::INVOICE_NUMBER => $fiskalInvoice[InvoiceInterface::INVOICE_NUMBER],
-            'fiskal_fiskal_date_time'                  => $fiskalInvoice[InvoiceInterface::FISKAL_DATE_TIME],
+            'fiskal_date_time'                         => $fiskalInvoice[InvoiceInterface::FISKAL_DATE_TIME],
             'fiskal_'.InvoiceInterface::SYNCED_AT      => $fiskalInvoice[InvoiceInterface::SYNCED_AT],
             'fiskal_'.InvoiceInterface::JIR            => $fiskalInvoice[InvoiceInterface::JIR],
             'fiskal_'.InvoiceInterface::ZKI            => $fiskalInvoice[InvoiceInterface::ZKI],
