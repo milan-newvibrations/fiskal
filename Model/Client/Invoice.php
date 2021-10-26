@@ -529,7 +529,7 @@ class Invoice extends Client
                                   )
                                   ->setIncrementId($increment)
                                   ->setInvoiceNumber($invoiceNumber->getFullInvoiceNumber())
-                                  ->setSyncedAt($this->getCurrentDateTime())
+                                  ->setSyncedAt($this->getCurrentDateTimeUtc())
                                   ->setFiskalDateTime($preparedInvoice->getDateTime())
                                   ->setFiskalDataSent($response->getRequest())
                                   ->setFiskalDataResponse($response->getResponse());
