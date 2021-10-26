@@ -131,7 +131,7 @@ class Client extends DataObject
      *
      * @return string
      */
-    public function getCurrentDateTime()
+    public function getCurrentDateTimeUtc()
     {
         $date = new \DateTime();
 
@@ -176,7 +176,7 @@ class Client extends DataObject
             );
         } finally {
             if ($this->client->isDebug()) {
-                //$this->logger->critical($return->toString());
+                $this->logger->critical($return->toString());
             }
         }
 

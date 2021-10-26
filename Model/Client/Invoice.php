@@ -444,7 +444,6 @@ class Invoice extends Client
      */
     public function sendEmail($object, $type)
     {
-        echo "Saljem email" . PHP_EOL;
         if ($type == FiskalInvoiceInterface::ENTITY_TYPE_INVOICE) {
             if ( $this->config->getSendInvoiceEmail() ) {
                 $this->invoiceManagementInterface->notify($object->getId());
@@ -536,7 +535,6 @@ class Invoice extends Client
                                   ->setFiskalDataResponse($response->getResponse());
                     $this->saveSequence($increment, $sequence);
                     $successful = true;
-                    echo $response->getResponse();
                 } else {
                     $fiskalInvoice->setErrorMessage($response->getResponse());
                 }
@@ -544,7 +542,6 @@ class Invoice extends Client
             $this->fiskalInvoiceRepository->save($fiskalInvoice);
 
             if (isset($object) && $successful) {
-                echo "Trebao bi poslat email" . PHP_EOL;
                 $this->saveOrderComment($object, $fiskalInvoice);
                 $this->sendEmail($object, $fiskalInvoice->getEntityType());
             }
