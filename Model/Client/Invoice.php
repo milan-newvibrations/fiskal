@@ -553,6 +553,9 @@ class Invoice extends Client
     /**
      * Prepare invoice for request
      *
+     * @todo Why not refactor it to use invoice totals
+     * instead of calculating totals from invoice items and shipping?
+     *
      * @param InvoiceInterface $invoice
      * @param string           $invoiceNumber
      *
@@ -569,6 +572,12 @@ class Invoice extends Client
         $taxClasses = [];
         if (floatval($invoice->getTaxAmount()) > 0) {
             foreach ($invoice->getAllItems() as $item) {
+
+                // Skip credit memo items without row totals (configurable product - parent)
+                if (is_null($item->getRowTotal())) {
+                    continue;
+                }
+
                 $taxClass = $storeTaxClasses[$item->getOrderItem()->getProduct()->getTaxClassId()];
                 $taxClassId = $taxClass->getClassId();
                 $taxClasses[$taxClassId] = [
@@ -677,6 +686,12 @@ class Invoice extends Client
         $taxClasses = [];
         if (floatval($creditmemo->getTaxAmount()) > 0) {
             foreach ($creditmemo->getAllItems() as $item) {
+
+                // Skip credit memo items without row totals (configurable product - parent)
+                if (is_null($item->getRowTotal())) {
+                    continue;
+                }
+
                 $taxClass = $storeTaxClasses[$item->getOrderItem()->getProduct()->getTaxClassId()];
                 $taxClassId = $taxClass->getClassId();
                 $taxClasses[$taxClassId] = [
