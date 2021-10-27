@@ -573,12 +573,10 @@ class Invoice extends Client
         if (floatval($invoice->getTaxAmount()) > 0) {
             foreach ($invoice->getAllItems() as $item) {
 
-                // Skip credit memo items without row totals (configurable product - parent)
+                // Skip invoice items without row totals (configurable product - parent)
                 if (is_null($item->getRowTotal())) {
                     continue;
                 }
-
-//                echo "Stavka PDV: " . ($item->getRowTotalInclTax() - $item->getRowTotal()) . PHP_EOL;
 
                 $taxClass = $storeTaxClasses[$item->getOrderItem()->getProduct()->getTaxClassId()];
                 $taxClassId = $taxClass->getClassId();
@@ -630,8 +628,6 @@ class Invoice extends Client
                     + $invoice->getShippingTaxAmount(),
             ];
         }
-
-//        print_r($taxClasses); die;
 
         // If we have multiple tax Classes but with same rate
         // we need to summarize it before sending request
