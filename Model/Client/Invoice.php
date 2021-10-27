@@ -719,23 +719,27 @@ class Invoice extends Client
 
                 $taxClass = $storeTaxClasses[$item->getOrderItem()->getProduct()->getTaxClassId()];
                 $taxClassId = $taxClass->getClassId();
+                $discountAmountInclTax = $item->getDiscountAmount();
+                $discountAmountTax = $item->getDiscountTaxCompensationAmount();
+                $discountAmountExclTax = $discountAmountInclTax - $discountAmountTax;
+
                 $taxClasses[$taxClassId] = [
                     'title'      => $taxClass->getClassName(),
-                    'percent'    => $item->$item->getOrderItem()->getTaxPercent(),
+                    'percent'    => $item->getOrderItem()->getTaxPercent(),
                     'amount'     => (
                         isset(
                             $taxClasses[$taxClassId]['amount']) ?
                             $taxClasses[$taxClassId]['amount'] :
                             0
                         )
-                        + $item->getRowTotal(),
+                        + $item->getRowTotal() - $discountAmountExclTax,
                     'tax_amount' => (
                         isset(
                             $taxClasses[$taxClassId]['tax_amount']) ?
                             $taxClasses[$taxClassId]['tax_amount'] :
                             0
                         )
-                        + ($item->getRowTotalInclTax() - $item->getRowTotal()),
+                        + ($item->getRowTotalInclTax() - $item->getRowTotal() - $discountAmountTax),
                 ];
             }
         }
@@ -761,15 +765,36 @@ class Invoice extends Client
                     ) + $creditmemo->getShippingTaxAmount(),
             ];
         }
-
+        // If we have multiple tax Classes but with same rate
+        // we need to summarize it before sending request
+        $sumarizedTaxRates = [];
         foreach ($taxClasses as $taxClassId => $taxData) {
             if (FiskalInvoice::TAX_TYPE_PDV == $this->config->getTaxTypeByClassId($taxClassId)) {
-                $this->addPdvTaxRate(
-                    number_format($taxData['percent'], 2),
-                    $prefix * $taxData['amount'],
-                    $prefix * $taxData['tax_amount']
-                );
+                $taxRate = number_format($taxData['percent'], 2);
+                $baseAmount = $prefix * $taxData['amount'];
+                $taxAmount = $prefix * $taxData['tax_amount'];
+
+                if (!isset($sumarizedTaxRates[$taxRate])) {
+                    $sumarizedTaxRates[$taxRate] = array(
+                        'baseAmount' => 0,
+                        'taxAmount'  => 0
+                    );
+                }
+
+                // Yes, += is used even if we are adding negative numbers
+                $sumarizedTaxRates[$taxRate]['baseAmount'] += $baseAmount;
+                $sumarizedTaxRates[$taxRate]['taxAmount']  += $taxAmount;
             }
+        }
+
+        $this->verifySumarizedTaxRates($sumarizedTaxRates, $creditmemo);
+
+        foreach ($sumarizedTaxRates as $sumarizedTaxRate => $sumarizedTaxRateValues) {
+            $this->addPdvTaxRate(
+                $sumarizedTaxRate,
+                $sumarizedTaxRateValues['baseAmount'],
+                $sumarizedTaxRateValues['taxAmount'],
+            );
         }
 
         //        @Todo: Trive - commented out intentionally, we chose not to cover these taxes for now
@@ -811,21 +836,27 @@ class Invoice extends Client
     private function verifySumarizedTaxRates($sumarizedTaxRates, $entity)
     {
         $entityTaxAmount = number_format($entity->getTaxAmount(), 2, '.', '');
+
+        // Use negative value for comparation if we deal with Credit memo
+        if ($entity instanceof \Magento\Sales\Model\Order\Creditmemo) {
+            $entityTaxAmount *= -1;
+        }
+
         $calculatedEntityTaxAmount = 0;
 
-        echo PHP_EOL . get_class($entity) . ': ' . $entity->getIncrementId() . PHP_EOL;
+//        echo PHP_EOL . get_class($entity) . ': ' . $entity->getIncrementId() . PHP_EOL;
 
         foreach ($sumarizedTaxRates as $taxRate => $taxRateValues) {
             $calculatedEntityTaxAmount += $taxRateValues['taxAmount'];
 
-            echo __('Tax rate: %1 %', $taxRate) . PHP_EOL;
-            echo __(' Base amount: %1', $taxRateValues['baseAmount']) . PHP_EOL;
-            echo __(' Tax: %1', $taxRateValues['taxAmount']) . PHP_EOL;
-            echo PHP_EOL;
+//            echo __('Tax rate: %1 %', $taxRate) . PHP_EOL;
+//            echo __(' Base amount: %1', $taxRateValues['baseAmount']) . PHP_EOL;
+//            echo __(' Tax: %1', $taxRateValues['taxAmount']) . PHP_EOL;
+//            echo PHP_EOL;
         }
 
-        echo "entityTaxAmount: " . $entityTaxAmount . PHP_EOL;
-        echo "calculatedEntityTaxAmount: " . $calculatedEntityTaxAmount . PHP_EOL;
+//        echo "entityTaxAmount: " . $entityTaxAmount . PHP_EOL;
+//        echo "calculatedEntityTaxAmount: " . $calculatedEntityTaxAmount . PHP_EOL;
 
         if ((string) $entityTaxAmount != (string) $calculatedEntityTaxAmount) {
             echo __(
@@ -836,9 +867,7 @@ class Invoice extends Client
             die;
         }
 
-
-        echo PHP_EOL;
-//        die("DOBAR");
+//        echo PHP_EOL;
     }
 
     /**
