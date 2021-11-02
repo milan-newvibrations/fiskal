@@ -111,11 +111,16 @@ class Sequence
         foreach ($this->storeManager->getStores() as $store) {
             $this->config->setStoreId($store->getId());
 
+            try {
             /** @var SequenceInterface $sequence */
             $sequence = $this->sequenceFactory->create();
             $sequence->setLocationCode($this->config->getLocationCode());
             $sequence->setYear($this->getCurrentYear());
             $this->sequenceRepository->save($sequence);
+
+            } catch (\Exception $e) {
+
+            }
         }
 
         return $this;
