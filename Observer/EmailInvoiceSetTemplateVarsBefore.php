@@ -131,8 +131,9 @@ class EmailInvoiceSetTemplateVarsBefore implements ObserverInterface
     /**
      * Get fiskal invoice by identifier
      *
-     * @param int $identifier
+     * @todo Refactor to use InvoiceManagement::getFiskalInvoice()
      *
+     * @param int $identifier
      * @return InvoiceInterface[]
      */
     private function getFiskalInvoice($identifier)

@@ -56,4 +56,7 @@
     <type name="Magento\Sales\Api\CreditmemoRepositoryInterface">
         <plugin name="creditmemoRepositoryCreateFiskalInvoice" type="Trive\Fiskal\Plugin\CreditmemoRepository"/>
     </type>
+    <type name="Magento\Sales\Model\Order\Email\Sender\InvoiceSender">
+        <plugin name="fiskalSalesOrderEmailSenderInvoiceSender" type="Trive\Fiskal\Plugin\InvoiceSender"/>
+    </type>
 </config>
