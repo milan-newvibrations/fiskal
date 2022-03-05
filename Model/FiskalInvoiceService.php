@@ -67,10 +67,10 @@ class FiskalInvoiceService
                       ->setPaymentDeviceCode($this->config->getPaymentDeviceCode())
                       ->setEntityType(FiskalInvoiceInterface::ENTITY_TYPE_INVOICE)
                       ->setEntityId($invoice->getEntityId());
-        try {
+      try {
             $this->invoiceRepository->save($fiskalInvoice);
-        } catch (\Exception $e) {
-        }
+       } catch (\Exception $e) {
+       }
     }
 
     /**
