@@ -17,6 +17,7 @@
     <preference for="Trive\Fiskal\Api\SequenceRepositoryInterface" type="Trive\Fiskal\Model\SequenceRepository"/>
     <preference for="Trive\Fiskal\Api\Data\SequenceInterface" type="Trive\Fiskal\Model\Sequence"/>
     <preference for="Trive\Fiskal\Api\Data\SequenceSearchResultsInterface" type="Trive\Fiskal\Model\SequenceSearchResult"/>
+    <preference for="Magento\Sales\Model\Order\Pdf\Invoice" type="Trive\Fiskal\Model\PdfInvoice" />
     <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
         <arguments>
             <argument name="collections" xsi:type="array">
@@ -58,8 +59,5 @@
     </type>
     <type name="Magento\Sales\Model\Order\Email\Sender\InvoiceSender">
         <plugin name="fiskalSalesOrderEmailSenderInvoiceSender" type="Trive\Fiskal\Plugin\InvoiceSender"/>
-    </type>
-    <type name="Magento\Sales\Model\Order\Pdf\Invoice">
-        <plugin name="fiskalSalesOrderPdfInvoice" type="Trive\Fiskal\Plugin\PdfInvoice"/>
     </type>
 </config>
