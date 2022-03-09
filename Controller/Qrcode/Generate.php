@@ -2,8 +2,9 @@
 
 namespace Trive\Fiskal\Controller\Qrcode;
 
-use Magento\Framework\App\Action\Context;
+
 use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
 
 class Generate extends \Magento\Framework\App\Action\Action
 {
@@ -12,8 +13,7 @@ class Generate extends \Magento\Framework\App\Action\Action
     /**
      * @inheritDoc
      */
-    public function execute()
-    {
+    public function execute() {
         $request = $this->getRequest();
 
         $text = sprintf(
@@ -23,9 +23,13 @@ class Generate extends \Magento\Framework\App\Action\Action
             $request->getParam('izn')
         );
 
-        $qrCode = new QrCode($text);
-        header('Content-Type: '.$qrCode->getContentType());
-        echo $qrCode->writeString();
+        $qrCode   = QrCode::create($text);
+        $writer   = new PngWriter();
+        $result   = $writer->write($qrCode);
+        
+        header('Content-Type: '.$result->getMimeType());
+        echo $result->getString();
+      
         die;
     }
 }
