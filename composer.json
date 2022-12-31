@@ -6,7 +6,7 @@
     "license": "proprietary",
     "require": {
         "php": "^7.0||~8.1.0",
-        "trive/fiskalapi": "^1.0.3",
+        "trive/fiskalapi": "dev-master",
         "endroid/qrcode": "*"
     },
     "autoload": {
