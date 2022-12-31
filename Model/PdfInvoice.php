@@ -44,67 +44,95 @@ class PdfInvoice extends \Magento\Sales\Model\Order\Pdf\Invoice{
 	}
 	
 	public function InsertFiskalInfo( $page, $invoice) {
-        $fiskalInfos = [];
-        $fiskalInvoice = $this->invoiceManagement->getFiskalInvoice($invoice->getId());
-        if (
-            !$fiskalInvoice
-            || !$fiskalInvoice->getZki()
-            || !$fiskalInvoice->getJir()
-        ) {
-            return;
-        }
+		
+		if ($invoice->getOrderCurrencyCode() == 'HRK' && $invoice->getBaseCurrencyCode() == 'HRK') {
+            		$totalEur = $invoice->getBaseGrandTotal() / 7.53450;
+            		$totalEur = number_format(round($totalEur, 2), 2, ',', '') . ' €';
+			$lineBlock = ['lines' => [], 'height' => 15];
+			$lineBlock['lines'][] = [
+				[
+				    'text' => 'Ukupno (EUR)',
+				    'feed' => 475,
+				    'align' => 'right',
+				    'font_size' => '10',
+				    'font' => 'bold',
+				],
+				[
+				    'text' => $totalEur,
+				    'feed' => 565,
+				    'align' => 'right',
+				    'font_size' => '10',
+				    'font' => 'bold'
+				]
+			];
+			$lineBlock['lines'][] = [
+				[
+				    'text' => 'Fiksni tečaj konverzije 1 EUR = 7,53450 HRK',
+				    'feed' => 565,
+				    'align' => 'right',
+				    'font_size' => '9',
+				],
+			];
+			$page = $this->drawLineBlocks($page, [$lineBlock]);
+		}
 
-        $fiskalInfos[] = [
-            'label' => 'Broj računa',
-            'value' => $fiskalInvoice->getInvoiceNumber()
-        ];
-        $fiskalInfos[] = [
-            'label' => 'Vrijeme izdavanja računa',
-            'value' => $fiskalInvoice->getFiskalDateTime()
-        ];
-        $fiskalInfos[] = [
-            'label' => 'ZKI',
-            'value' => $fiskalInvoice->getZki()
-        ];
-        $fiskalInfos[] = [
-            'label' => 'JIR',
-            'value' => $fiskalInvoice->getJir()
-        ];
+		$fiskalInfos = [];
+		$fiskalInvoice = $this->invoiceManagement->getFiskalInvoice($invoice->getId());
+		if (!$fiskalInvoice || !$fiskalInvoice->getZki() || !$fiskalInvoice->getJir()) {
+		    return;
+		}
 
-        $this->y -= 20;
-        $lineBlock = ['lines' => [], 'height' => 15];
-        foreach ($fiskalInfos as $fiskalInfo) {
-            $lineBlock['lines'][] = [
-                [
-                    'text' => $fiskalInfo['label'] . ':',
-                    'feed' => 375,
-                    'align' => 'right',
-                    'font' => 'bold',
-                ],
-                [
-                    'text' => $fiskalInfo['value'],
-                    'feed' => 565,
-                    'align' => 'right'
-                ]
-            ];
-        }
+		$fiskalInfos[] = [
+		    'label' => 'Broj računa',
+		    'value' => $fiskalInvoice->getInvoiceNumber()
+		];
+		$fiskalInfos[] = [
+		    'label' => 'Vrijeme izdavanja računa',
+		    'value' => $fiskalInvoice->getFiskalDateTime()
+		];
+		$fiskalInfos[] = [
+		    'label' => 'ZKI',
+		    'value' => $fiskalInvoice->getZki()
+		];
+		$fiskalInfos[] = [
+		    'label' => 'JIR',
+		    'value' => $fiskalInvoice->getJir()
+		];
 
-        $page = $this->drawLineBlocks($page, [$lineBlock]);
+		$this->y -= 20;
+		$lineBlock = ['lines' => [], 'height' => 15];
+		foreach ($fiskalInfos as $fiskalInfo) {
+		    $lineBlock['lines'][] = [
+			[
+			    'text' => $fiskalInfo['label'] . ':',
+			    'feed' => 375,
+			    'align' => 'right',
+			    'font' => 'bold',
+			],
+			[
+			    'text' => $fiskalInfo['value'],
+			    'feed' => 565,
+			    'align' => 'right'
+			]
+		    ];
+		}
+
+		$page = $this->drawLineBlocks($page, [$lineBlock]);
         
-        $text = sprintf(
-            self::POREZNA_URL,
-            $fiskalInvoice->getZki(),
-            date('Ymd_Hi', strtotime($fiskalInvoice->getFiskalDateTime())),
-            number_format($invoice->getBaseGrandTotal(), 2, '', '')
-        );
-       
-        $filename = tempnam('', 'qrcode-pdf') .'.png';
-        $qrCode   = QrCode::create($text);
-        $writer   = new PngWriter();
+		$text = sprintf(
+		    self::POREZNA_URL,
+		    $fiskalInvoice->getZki(),
+		    date('Ymd_Hi', strtotime($fiskalInvoice->getFiskalDateTime())),
+		    number_format($invoice->getBaseGrandTotal(), 2, '', '')
+		);
+
+		$filename = tempnam('', 'qrcode-pdf') .'.png';
+		$qrCode   = QrCode::create($text);
+		$writer   = new PngWriter();
 		$writer->write($qrCode)->saveToFile($filename);
-        $image = \Zend_Pdf_Image::imageWithPath($filename);
-        $page->drawImage($image, 30, $this->y, 130, $this->y + 100);
-    }
+		$image = \Zend_Pdf_Image::imageWithPath($filename);
+		$page->drawImage($image, 30, $this->y, 130, $this->y + 100);
+	}
     
 
 }
