@@ -16,5 +16,10 @@
         "psr-4": {
             "Trive\\Fiskal\\": ""
         }
-    }
+    },
+    "repositories": [{
+            "url": "https://github.com/milan-newvibrations/fiskalapi",
+            "type": "vcs"
+    }]
+
 }
