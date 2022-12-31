@@ -40,6 +40,8 @@ interface InvoiceInterface extends ExtensibleDataInterface
     const JIR = 'jir';
 
     const ZKI = 'zki';
+    
+    const OPERATOR = 'operator';
 
     const ERROR_MESSAGE = 'error_message';
     
@@ -206,6 +208,18 @@ interface InvoiceInterface extends ExtensibleDataInterface
      * @return $this
      */
     public function setZki($zki);
+    
+    /**
+     * @return string
+     */
+    public function getOperator();
+
+    /**
+     * @param string $operator
+     *
+     * @return $this
+     */
+    public function setOperator($operator);
 
     /**
      * @return string
