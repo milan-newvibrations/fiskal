@@ -26,9 +26,9 @@ class Invoice extends AbstractDb
      * @param null    $resourcePrefix
      */
     public function __construct(
-        Context $context,
-        ?string $resourcePrefix,
-    	\Psr\Log\LoggerInterface $logger
+       Context $context,
+       \Psr\Log\LoggerInterface $logger,
+       string $resourcePrefix = null
     ) {
         $this->context = $context;
         $this->resourcePrefix = $resourcePrefix;
