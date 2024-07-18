@@ -16,6 +16,9 @@ use Magento\Framework\Model\ResourceModel\Db\Context;
 
 class Sequence extends AbstractDb
 {
+
+    protected $context;
+    protected $resourcePrefix;
     /**
      * Sequence constructor.
      *
