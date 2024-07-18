@@ -145,7 +145,7 @@ class InstallSchema implements InstallSchemaInterface
         )->addColumn(
             'jir',
             \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-            32,
+            36,
             [],
             'JIR'
         )->addColumn(
@@ -166,6 +166,30 @@ class InstallSchema implements InstallSchemaInterface
             '64k',
             [],
             'Error Message'
+       )->addColumn(
+            'fiskal_data_sent',
+            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+            '64k',
+             [],
+            'Fiskal Data Sent'
+       )->addColumn(
+           'fiskal_data_response',
+           \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+           '64k',
+           [],
+           'Fiskal Data Respone'
+       )->addColumn(
+           'fiskal_date_time',
+           \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME,
+           null,
+           ['nullable' => false],
+           'Fiskal Invoice Date Time'
+        )->addColumn(
+            'operator',
+            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+            36,
+            [],
+            'Operator'
         )->addIndex(
             $setup->getIdxName('trive_fiskal_invoice', ['store_id']),
             ['store_id']
