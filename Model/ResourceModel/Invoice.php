@@ -18,6 +18,8 @@ class Invoice extends AbstractDb
 {
 	protected static $oldEid = false;
 	protected $_logger  = false;
+	protected $context;
+	protected $resourcePrefix;
 	
     /**
      * Invoice constructor.
