@@ -88,7 +88,7 @@ class AbstractTemplate
      */
     public function beforeGetProcessedTemplate(
         AbstractTemplateSubject $subject,
-        $variables
+        $variables = []
     ) {
         $storeId = $this->storeManager->getStore()->getId();
         $this->config->setStoreId($storeId);
