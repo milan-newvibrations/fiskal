@@ -92,11 +92,7 @@ class AbstractTemplate
     ) {
         $storeId = $this->storeManager->getStore()->getId();
         $this->config->setStoreId($storeId);
-        if (!$this->config->isEnabled($storeId)) {
-            return $this;
-        }
-
-        if (in_array($subject->getTemplateId(), array_keys($this->storeTemplates))) {
+        if ($this->config->isEnabled($storeId) && in_array($subject->getTemplateId(), array_keys($this->storeTemplates))) {
             $type = $this->storeTemplates[$subject->getTemplateId()];
             if (($type == InvoiceInterface::ENTITY_TYPE_INVOICE && $this->config->getAutoAddToInvoice())
                 ||
